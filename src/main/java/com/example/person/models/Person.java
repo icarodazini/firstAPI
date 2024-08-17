@@ -3,13 +3,18 @@ package com.example.person.models;
 import jakarta.persistence.*;
 
 @Entity
+@Table(name = "person")
 public class Person {
 
     @Id
+    @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "NAME")
     private String name;
+
+    @Column(name = "EMAIL")
     private String email;
 
     public Person() {

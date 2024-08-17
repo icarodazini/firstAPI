@@ -1,13 +1,17 @@
 package com.example.person.controllers;
 
 import com.example.person.models.Person;
+import com.example.person.repositories.PersonCustomRepository;
 import com.example.person.repositories.PersonRepository;
+import com.example.person.services.PersonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @RestController
@@ -17,10 +21,32 @@ public class PersonController {
     @Autowired
     private PersonRepository personRepository;
 
+    @Autowired
+    private PersonCustomRepository personCustomRepository;
+
+    @Autowired
+    private PersonService personServiceRepository;
+
     @GetMapping
     public ResponseEntity<List<Person>> findAll(){
-        List<Person> personList = personRepository.findAll();
+        List<Person> personList = personCustomRepository.getAllStories();
         return ResponseEntity.status(HttpStatus.OK).body(personList);
+    }
+
+    @GetMapping("/parteDoNome/{parteDoNome}")
+    public ResponseEntity<List<Object>> BuscarListaDePessoasPorParteDoNome(@PathVariable(value = "parteDoNome")String parteDoNome){
+            if (parteDoNome.length() >= 4) {
+
+                List<Person> listaDePessoasRetornadas = personServiceRepository.buscarParteDoNome(parteDoNome);
+
+                if (listaDePessoasRetornadas.isEmpty()){
+                    return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+               }
+
+                return ResponseEntity.status(HttpStatus.OK).body(Collections.singletonList(listaDePessoasRetornadas));
+            }
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Collections.singletonList("precisa de mais caractere"));
     }
 
     @GetMapping("/id/{id}")
