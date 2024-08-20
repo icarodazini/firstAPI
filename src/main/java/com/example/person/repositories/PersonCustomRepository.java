@@ -6,5 +6,5 @@ import java.util.List;
 
 public interface PersonCustomRepository{
     public List<Person> getAllStories();
-    public List<Person> partOfPeoplesNames(String partOfTheName);
+    public List<Object[]> partOfPeoplesNames(String partOfTheName);
 }

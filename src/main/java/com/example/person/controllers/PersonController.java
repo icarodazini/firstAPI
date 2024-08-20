@@ -34,8 +34,8 @@ public class PersonController {
     }
 
     @GetMapping("/parteDoNome/{parteDoNome}")
-    public ResponseEntity<List<Object>> BuscarListaDePessoasPorParteDoNome(@PathVariable(value = "parteDoNome")String parteDoNome){
-            if (parteDoNome.length() >= 4) {
+    public ResponseEntity<?> BuscarListaDePessoasPorParteDoNome(@PathVariable(value = "parteDoNome")String parteDoNome){
+            if (parteDoNome.length() >= 2) {
 
                 List<Person> listaDePessoasRetornadas = personServiceRepository.buscarParteDoNome(parteDoNome);
 
@@ -43,7 +43,7 @@ public class PersonController {
                     return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
                }
 
-                return ResponseEntity.status(HttpStatus.OK).body(Collections.singletonList(listaDePessoasRetornadas));
+                return ResponseEntity.status(HttpStatus.OK).body(listaDePessoasRetornadas);
             }
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Collections.singletonList("precisa de mais caractere"));
