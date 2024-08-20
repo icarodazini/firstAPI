@@ -1,9 +1,21 @@
 package com.example.person.controllers;
 
+import aj.org.objectweb.asm.TypeReference;
+import com.example.person.models.Alimento;
 import com.example.person.services.DietaServiceInterface;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(value = "/dieta")
@@ -16,7 +28,48 @@ public class DietaController {
     }
 
     @GetMapping("/dados")
-    public String chamarApiDeDieta() {
-        return dietaServiceInterface.getExampleData();
+    public ResponseEntity<String> chamarApiDeDieta() {
+        String dadosDeTodasDietas = dietaServiceInterface.getExampleData();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Type", "application/json");
+
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        try {
+            Alimento[] alimentosArray = objectMapper.readValue(dadosDeTodasDietas, Alimento[].class);
+            List<Alimento> alimentos = Arrays.stream(alimentosArray).toList();
+            for (Alimento alimento : alimentos) {
+                System.out.println("Descrição: " + alimento.getDescricao() + ", Kcal: " + alimento.getKcal());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).headers(headers).body(dadosDeTodasDietas);
+    }
+
+    @GetMapping("/dados/{parteDoNome}")
+    public ResponseEntity<List<Alimento>> chamarApiDietaParte(@PathVariable(value = "parteDoNome")String parteDoNome) {
+        String dadosDeTodasDietas = dietaServiceInterface.getExampleData();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Type", "application/json");
+
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        try {
+            Alimento[] alimentosArray = objectMapper.readValue(dadosDeTodasDietas, Alimento[].class);
+
+            List<Alimento> alimentos = Arrays.stream(alimentosArray)
+                    .filter(alimento -> alimento.getDescricao().toLowerCase().contains(parteDoNome))
+                    .toList();
+
+            return ResponseEntity.status(HttpStatus.OK).headers(headers).body(alimentos);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).headers(headers).build();
     }
 }
