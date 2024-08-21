@@ -1,6 +1,5 @@
 package com.example.person.controllers;
 
-import aj.org.objectweb.asm.TypeReference;
 import com.example.person.models.Alimento;
 import com.example.person.services.DietaServiceInterface;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -12,13 +11,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping(value = "/dieta")
+@RequestMapping(value = "/dieta", produces = "application/json")
 public class DietaController {
 
     private final DietaServiceInterface dietaServiceInterface;
@@ -31,8 +28,6 @@ public class DietaController {
     public ResponseEntity<String> chamarApiDeDieta() {
         String dadosDeTodasDietas = dietaServiceInterface.getExampleData();
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Type", "application/json");
 
         ObjectMapper objectMapper = new ObjectMapper();
 
@@ -46,7 +41,7 @@ public class DietaController {
             e.printStackTrace();
         }
 
-        return ResponseEntity.status(HttpStatus.OK).headers(headers).body(dadosDeTodasDietas);
+        return ResponseEntity.status(HttpStatus.OK).body(dadosDeTodasDietas);
     }
 
     @GetMapping("/dados/{parteDoNome}")
