@@ -9,9 +9,6 @@ public class Alimento {
     @JsonProperty("id")
     private int id;
 
-    @JsonProperty("grupo")
-    private String grupo;
-
     @JsonProperty("descricao")
     private String descricao;
 
@@ -27,24 +24,12 @@ public class Alimento {
     @JsonProperty("lipideos_g")
     private String gordura;
 
-    @JsonProperty("slug")
-    private String slug;
-
-
     public int getId() {
         return id;
     }
 
     public void setId(int id) {
         this.id = id;
-    }
-
-    public String getGrupo() {
-        return grupo;
-    }
-
-    public void setGrupo(String grupo) {
-        this.grupo = grupo;
     }
 
     public String getDescricao() {

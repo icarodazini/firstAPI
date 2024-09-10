@@ -25,23 +25,24 @@ public class DietaController {
     }
 
     @GetMapping("/dados")
-    public ResponseEntity<String> chamarApiDeDieta() {
-        String dadosDeTodasDietas = dietaServiceInterface.getExampleData();
+    public ResponseEntity<List<Alimento>> chamarApiDeDieta() {
 
+        String dadosDeTodasDietas = dietaServiceInterface.getExampleData();
 
         ObjectMapper objectMapper = new ObjectMapper();
 
         try {
             Alimento[] alimentosArray = objectMapper.readValue(dadosDeTodasDietas, Alimento[].class);
-            List<Alimento> alimentos = Arrays.stream(alimentosArray).toList();
+            List<Alimento> alimentos = Arrays.asList(alimentosArray);
+
             for (Alimento alimento : alimentos) {
                 System.out.println("Descrição: " + alimento.getDescricao() + ", Kcal: " + alimento.getKcal());
             }
+            return ResponseEntity.status(HttpStatus.OK).body(alimentos);
         } catch (Exception e) {
             e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
-
-        return ResponseEntity.status(HttpStatus.OK).body(dadosDeTodasDietas);
     }
 
     @GetMapping("/dados/{parteDoNome}")
