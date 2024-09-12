@@ -3,7 +3,6 @@ package com.example.person.controllers;
 import com.example.person.models.Alimento;
 import com.example.person.services.DietaServiceInterface;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -47,11 +46,8 @@ public class DietaController {
 
     @GetMapping("/dados/{parteDoNome}")
     public ResponseEntity<List<Alimento>> chamarApiDietaParte(@PathVariable(value = "parteDoNome")String parteDoNome) {
+
         String dadosDeTodasDietas = dietaServiceInterface.getExampleData();
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Type", "application/json");
-
         ObjectMapper objectMapper = new ObjectMapper();
 
         try {
@@ -61,11 +57,10 @@ public class DietaController {
                     .filter(alimento -> alimento.getDescricao().toLowerCase().contains(parteDoNome))
                     .toList();
 
-            return ResponseEntity.status(HttpStatus.OK).headers(headers).body(alimentos);
+            return ResponseEntity.status(HttpStatus.OK).body(alimentos);
         } catch (Exception e) {
             e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
-
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).headers(headers).build();
     }
 }
